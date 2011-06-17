@@ -131,8 +131,9 @@ if( is_array($rows) && count($rows) > 0) {
         	echo substr($row['description'],0,300)."...<br/>"; */
 		echo "<dd id='section".$i."'>";
 		echo "<form name=\"form1\" method=\"post\" action=\"mods/_core/imscp/ims_import.php\" enctype=\"multipart/form-data\" onsubmit=\"openWindow('". AT_BASE_HREF . "tools/prog.php');\">";
-		echo "<input type=\"hidden\" name=\"url\" id=\"to_url\" value='". $row['cc'] ."' />";
-		echo "<input type=\"hidden\" name=\"allow_test_export\" value='1' />";
+		echo "<input type=\"hidden\" name=\"url\" id=\"to_url\" value='". trim($row['cc']) ."' />";
+		echo "<input type=\"hidden\" name=\"allow_test_export\" value=1 />";
+		echo "<input type=\"hidden\" name=\"ignore_validation\" value=1 />";
 		echo $importbutton;
 		echo "</form>";
 		
