@@ -121,7 +121,7 @@ if( is_array($rows) && count($rows) > 0) {
 		 }
 		 //$curr_url .= "#section";
 		
-		echo "<dt>".$i.".<a href='#' >".$row['title']." </a></dt>";
+		echo "<dt><h3>".$i.".<a href='#' >".$row['title']." </a></h3></dt>";
 		
 		/*if( strlen($row['description']) < 300 )
 			echo $row['description']."<br/>";	
