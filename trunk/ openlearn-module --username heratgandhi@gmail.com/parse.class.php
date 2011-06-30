@@ -4,30 +4,36 @@ function checkConnection() {
     //Initiates a socket connection to www.google.com at port 80
     $conn = @fsockopen("www.google.com", 80, $errno, $errstr, 30);
     if ($conn) {
-        $status = "Connection is OK";
+        $status = true;
         fclose($conn);
     }
     else {
-        $status = "NO Connection<br/>\n";
-        $status .= "$errstr ($errno)";
+        $status = false;
     }
-    return $conn;
+    return $status;
 }
 class Parser {
     function parse() {
+        
         $xml = new XMLReader();
         @set_time_limit(0);
         global $db;
         $connS = false;
         $conn = checkConnection();
-
-        if( $conn ) {
+        
+	   
+        $op='';
+	if( $conn ) {
             $connS = true;
             $xml->open("http://openlearn.open.ac.uk/local/oai/oai2.php?verb=ListRecords&metadataPrefix=oai_ilox");
+            $op = '1';
         }
         else {
-            $xml->open("oai2.php.xml");
+			$connS = false;
+            $xml->open("../../ol_search_open_learn/oai2.php.xml");
+            $op = '2';
         }
+
         
         $members= array();
         $flag=false;
