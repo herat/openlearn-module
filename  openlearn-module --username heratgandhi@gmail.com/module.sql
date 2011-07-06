@@ -42,7 +42,7 @@ INSERT INTO `language_text` VALUES ('en', '_msgs','AT_FEEDBACK_SETTINGS_CHANGED'
 
 #configuration data
 INSERT INTO `config` VALUES ('ol_url','http://openlearn.open.ac.uk/local/oai/oai2.php?verb=ListRecords&metadataPrefix=oai_ilox');
-
+INSERT INTO `config` VALUES ('ol_last_updation','');
 
 
 

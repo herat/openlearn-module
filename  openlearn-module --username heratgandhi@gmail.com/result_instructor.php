@@ -20,7 +20,7 @@ if( !$start1 )
 $start = intval(trim(strtolower($_GET['p'])))-1;
 if($start < 0)
 	$start = 0;
-if ($maxResults == 0) $maxResults = 5;  // default
+if ($maxResults == 0) $maxResults = 10;  // default
 if ($orderby == 0) $orderby = 1; 
 
 $start = $start * $maxResults;
@@ -51,7 +51,7 @@ else $total_num = 0;
 <?php echo _AT('ol_search_open_learn'); ?>:
             </td>
             <td>
-                <input type="text" name="q" />
+                <input type="text" name="q" value="<?php echo $_GET['q']; ?>" />
             </td>
 
         </tr>
@@ -181,7 +181,9 @@ if( is_array($rows) && count($rows) > 0) {
 
 
         echo "<p><b>Description:</b><br/>".stripslashes($row['description'])."</p>";
-		echo "<b>Keywords:</b><br/>".stripslashes($row['keywords'])."</b>";
+		echo "<p><b>Keywords:</b><br/>".stripslashes($row['keywords'])."</p>";
+		$datentime = datestamp(stripslashes($row['datestamp']));
+		echo "<p><b>Last modified on(DD-MM-YYYY):</b><br/>".$datentime[0]." at ".$datentime[1]."</p>";
 		echo "<br/>";
 
 
@@ -198,7 +200,7 @@ if( is_array($rows) && count($rows) > 0) {
 
         $prevw = "<a href=\"javascript: void(popup('".$row['website']."','Preview',screen.width*0.45,screen.height*0.45));\" >Preview on OL</a>";
 
-        echo "<br/>".$imgs.$prevw;
+        echo $imgs.$prevw;
 
         echo "</dd>";
 
@@ -232,7 +234,20 @@ else {
 }
 ?>
 <?php
-require (AT_INCLUDE_PATH.'footer.inc.php'); ?>
+require (AT_INCLUDE_PATH.'footer.inc.php'); 
+function datestamp( $datestamp )
+{
+	$ind = strpos( $datestamp, 'T');
+	$date = substr( $datestamp , 0 , $ind);
+	$time = substr( $datestamp , $ind+1);
+	$time = substr( $time , 0, strlen($time)-1);
+	$parts = explode("-",$date);
+	$dateandtime = array();
+	$dateandtime[0] = $parts[2]."-".$parts[1]."-".$parts[0] ;
+	$dateandtime[1] = $time;
+	return $dateandtime;
+}
+?>
 
 <script>
     function changeMax()
