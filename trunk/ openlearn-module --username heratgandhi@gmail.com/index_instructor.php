@@ -15,6 +15,20 @@ require (AT_INCLUDE_PATH.'header.inc.php');
             </td>
 
         </tr>
+         <tr>
+        	<td>
+            <?php echo _AT('ol_order'); ?>:
+            </td>
+            <td>
+            	<select name="orderby" id="orderby" >
+                    <option value="1" <?php if($orderby==1) echo "selected='selected'" ?>>DEFAULT</option>
+                    <option value="2" <?php if($orderby==2) echo "selected='selected'" ?>>TITLE ASC</option>
+                    <option value="3" <?php if($orderby==3) echo "selected='selected'" ?>>TITLE DESC</option>
+                    <option value="4" <?php if($orderby==4) echo "selected='selected'" ?>>DATE ASC</option>
+                    <option value="5" <?php if($orderby==5) echo "selected='selected'" ?>>DATE DESC</option>
+                </select>
+            </td>
+        </tr>
         <tr>
             <td colspan="2">
                 <input type="submit" value="Search" />
