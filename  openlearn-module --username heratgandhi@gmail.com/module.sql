@@ -30,7 +30,9 @@ INSERT INTO `language_text` VALUES ('en', '_module','ol_min','minutes',NOW(),'')
 INSERT INTO `language_text` VALUES ('en', '_module','ol_change','Change',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','ol_max_reco','Maximum Records',NOW(),'');
 INSERT INTO `language_text` VALUES ('en', '_module','ol_order','Order By',NOW(),'');
-
+INSERT INTO `language_text` VALUES ('en', '_module','ol_bool','Boolean Operation',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','ol_or','OR',NOW(),'');
+INSERT INTO `language_text` VALUES ('en', '_module','ol_and','AND',NOW(),'');
 
 
 #adding feedback messages
