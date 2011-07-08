@@ -17,6 +17,15 @@ require (AT_INCLUDE_PATH.'header.inc.php');
 
         </tr>
         <tr>
+          <td>
+          <?php echo _AT('ol_bool'); ?>:
+          </td>
+          <td>
+          <input type="radio" name="b" id="bool" value="1" /><?php echo _AT('ol_or'); ?>
+          <input type="radio" name="b" id="bool" value="2" checked="checked" /><?php echo _AT('ol_and'); ?>
+          </td>
+        </tr>
+        <tr>
         	<td>
             <?php echo _AT('ol_order'); ?>:
             </td>
