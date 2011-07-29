@@ -31,6 +31,7 @@
 	$start1 = intval(trim(strtolower($_GET['p'])));
 	$bool = intval(trim(strtolower($_GET['b'])));
 	$orderby = intval(trim(strtolower($_GET['orderby'])));
+    $qry = addslashes(filter_input(INPUT_GET,'q',FILTER_SANITIZE_SPECIAL_CHARS));
 	
 	if (!$start1){
 		$start1 = 1;
@@ -47,15 +48,18 @@
 	if ($orderby == 0){
 		$orderby = 1; // default
 	}
-	$urlforkey = urlencode($_GET['q']);
+    if( $bool != 1){
+        $bool = 2; //default
+    }
+	$urlforkey = urlencode($qry);
 	
 	$start = $start * $maxResults; //get starting result number from page number
 	//get search results using all parameters
-	$rows = $obj->getSearchResult($_GET['q'], $bool, $orderby, $start, $maxResults);
+	$rows = $obj->getSearchResult($qry, $bool, $orderby, $start, $maxResults);
 	//echo count($rows)."<br/>";
 	
 	//get all search results without any conditions
-	$all_results = $obj->getSearchResult($_GET['q'], $bool, $orderby);
+	$all_results = $obj->getSearchResult($qry, $bool, $orderby);
 	
 	if (is_array($all_results)){
 		//count total results
@@ -67,7 +71,7 @@
 	//Search form
 ?>
 <div class="input-form">
-<form name="search" method="get" action="mods/ol_search_open_learn/result_instructor.php" onsubmit="return validate()">
+<form name="search" method="get" action="mods/ol_search_open_learn/result_instructor.php" >
     <?php
 		if ($maxResults1 != 0) {
 			echo "<input name='max' type='hidden' value='" . $_GET['max'] . "'/>";
@@ -79,16 +83,16 @@
     <table>
         <tr>
             <td>
-				<?php echo _AT('ol_search_open_learn'); ?>:
+				<label for="key"><?php echo _AT('ol_search_open_learn'); ?>:</label>
             </td>
             <td>
-                <input type="text" name="q" value="<?php echo $_GET['q']; ?>" id="key" size="40" />
+                <input type="text" name="q" value="<?php echo $qry; ?>" id="key" size="40" />
             </td>
 
         </tr>
         <tr>
             <td>
-				<?php echo _AT('ol_bool'); ?>:
+				<label for="bool"><?php echo _AT('ol_bool'); ?>:</label>
             </td>
             <td>
                 <input type="radio" name="b" id="bool" value="1" <?php if ($bool == 1) echo "checked=\"checked\""; ?> /><?php echo _AT('ol_or'); ?>
@@ -110,10 +114,12 @@
         echo "<table width='100%'>";
         echo "<tr>";
         echo "<td align='left'>";
+        echo "<label for='maxResults'>";
         echo _AT('ol_max_reco');
 ?>: 
+</label>
 <form name="max" method="get" action="<?php $maxUrl = $_SERVER[PHP_SELF]; echo $maxUrl; ?>" >
-        <input type="hidden" value="<?php echo $_GET['q']; ?>" name="q" />
+        <input type="hidden" value="<?php echo $qry; ?>" name="q" />
         <input type="hidden" value="<?php echo $_GET['b']; ?>" name="b" />
     	<?php
         	if ($orderby > 1) {
@@ -133,11 +139,12 @@
 
 <?php
 	echo "<td align='right' >";
+    echo "<label for='orderby'>";
 	echo _AT('ol_order');
 ?>:
-
+</label>
 <form name="order" method="get" action="<?php $maxUrl = $_SERVER[PHP_SELF]; echo $maxUrl; ?>" >
-	<input type="hidden" value="<?php echo $_GET['q']; ?>" name="q" />
+	<input type="hidden" value="<?php echo $qry; ?>" name="q" />
     <input type="hidden" value="<?php echo $_GET['b']; ?>" name="b" />
 	<?php
     	if ($maxResults1 > 0) {
@@ -210,7 +217,9 @@
 	//display search results
 	if (is_array($rows) && count($rows) > 0) {
 		$i = $start + 1;
+		$iter = 0;
 		//starting of accordion
+        echo "<a href='#' id='focus_here'></a>";
 		echo "<div id='container'>";
 		echo "<dl id='accordion'>";
 	
@@ -235,8 +244,11 @@
 			echo "<input type=\"hidden\" name=\"url\" id=\"to_url\" value='" . trim($row['cc']) . "' />";
 			echo "<input type=\"hidden\" name=\"allow_test_export\" value='1' />";
 			echo "<input type=\"hidden\" name=\"ignore_validation\" value='1' />";
-			echo "<input type=\"hidden\" name=\"q\" value=' " . $_GET['q'] . " ' />";
+			echo "<input type=\"hidden\" name=\"q\" value=' " . $qry . " ' />";
+			echo "<input type=\"hidden\" name=\"b\" value=' " . $bool . " ' />";
+			echo "<input type=\"hidden\" name=\"p\" value=' " . intval(trim(strtolower($_GET['p']))) . " ' />";
 			echo "<input type=\"hidden\" name=\"max\" value=' " . $_GET['max'] . " ' />";
+			echo "<input type=\"hidden\" name=\"n_val\" value='".$iter."'/>";
 			echo $importbutton;
 			echo "</form>";
 	
@@ -249,14 +261,15 @@
 	
 	
 			$i++;
+			$iter++;
 			//link for CC & CP files of unit
-			$imgs = "<a href='" . $row['cp'] . "'> <img src='mods/ol_search_open_learn/cp.png' alt='Download Content Package' title='Download Content Package' border='0' /> </a> <a href='" . $row['cc'] . "'> <img src='mods/ol_search_open_learn/cc.png' alt='Download Common Cartridge' title='Download Common Cartridge' border='0' /> </a>";
+			$imgs = "<a href='" . $row['cp'] . "'> <img src='mods/ol_search_open_learn/images/cp.png' alt='Download Content Package' title='Download Content Package' border='0' /> </a> <a href='" . $row['cc'] . "'> <img src='mods/ol_search_open_learn/images/cc.png' alt='Download Common Cartridge' title='Download Common Cartridge' border='0' /> </a>";
 			//link for popup window of unit
-			$prevw = "<a href=\"javascript: void(popup('" . $row['website'] . "','Preview',screen.width*0.45,screen.height*0.45));\" ><img src='mods/ol_search_open_learn/popup.gif' alt='Preview on OpenLearn(popup window)' title='Preview on OpenLearn(popup window)' border='0' /> </a>";
+			$prevw = "<a href=\"javascript: void(popup('" . $row['website'] . "','Preview',screen.width*0.45,screen.height*0.45));\" ><img src='mods/ol_search_open_learn/images/popup.gif' alt='Preview on OpenLearn(popup window)' title='Preview on OpenLearn(popup window)' border='0' /> </a>";
 			//link for RSS of unit
-			$rss = "<a href=\"javascript: void(popup('" . parseForNumber($row['cc'], $row['entry']) . "','RSS',screen.width*0.45,screen.height*0.45));\"><img src='mods/ol_search_open_learn/rss.gif' alt='RSS for Unit(popup window)' title='RSS for Unit(popup window)' border='0' /></a>";
+			$rss = "<a href=\"javascript: void(popup('" . parseForNumber($row['cc'], $row['entry']) . "','RSS',screen.width*0.45,screen.height*0.45));\"><img src='mods/ol_search_open_learn/images/rss.gif' alt='RSS for Unit(popup window)' title='RSS for Unit(popup window)' border='0' /></a>";
 			//link for .doc file of unit
-			$doc_file = "<a href=\"javascript: void(popup('".AT_BASE_HREF."mods/ol_search_open_learn/doc.php?cc=".$row['cc']."&entry=".$row['entry']."','Download',screen.width*0.30,screen.height*0.20));\" ><img src='mods/ol_search_open_learn/word.gif' alt='Download doc file(popup window)' title='Download doc file(popup window)' border='0' /></a>";
+			$doc_file = "<a href=\"javascript: void(popup('".AT_BASE_HREF."mods/ol_search_open_learn/doc.php?cc=".$row['cc']."&entry=".$row['entry']."','Download',screen.width*0.30,screen.height*0.20));\" ><img src='mods/ol_search_open_learn/images/word.gif' alt='Download doc file(popup window)' title='Download doc file(popup window)' border='0' /></a>";
 	
 			echo "<div align='left' class='menuitems'>".$imgs . $prevw . $rss . $doc_file. "</div><br/>";
 	
@@ -281,7 +294,7 @@
 		}
 	} 
 	else {
-		echo _AT('ol_no')." <b>" . $_GET['q'] . "</b> <br/>";
+		echo _AT('ol_no')." <b>" . $qry . "</b> <br/>";
 	}
 ?>
 <?php
@@ -331,7 +344,7 @@
 		var e = document.getElementById("maxResults");
 		var ele= e.options[e.selectedIndex].value;
 	
-		window.location = "<?php echo $_SERVER[PHP_SELF] . "?q=" . $_GET['q'] . "&max="; ?>"+ele;
+		window.location = "<?php echo $_SERVER[PHP_SELF] . "?q=" . $qry . "&max="; ?>"+ele;
 	}
     var but_src;
     
@@ -386,9 +399,24 @@
 		}
 	}
 </script>
-
 <script language="javascript" type="text/javascript" src="/ATutor/jscripts/infusion/lib/jquery/core/js/jquery.js"></script>
-<script language="javascript" type="text/javascript" src="mods/ol_search_open_learn/accordion.js"></script>
+<?php 
+	if( $_SESSION['n_val'] == '' || $_SESSION['n_val'] == null ) {
+?>
+<script language="javascript" type="text/javascript" src="mods/ol_search_open_learn/js/accordion.js"></script>
+<?php
+	}
+	else {
+?>
+<input type="hidden" id="n_val" value="<?php echo $_SESSION['n_val']; ?>" />
+<script language="javascript" type="text/javascript" src="mods/ol_search_open_learn/js/accordion_import.js"></script>
+<?php		
+		$_SESSION['n_val']="";
+	}	
+	
+?>
+
+
 <style type="text/css">
 	div.menuitems{
 		float:left;
